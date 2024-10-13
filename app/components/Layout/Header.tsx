@@ -12,16 +12,14 @@ export function Header() {
                         O1
                     </Link>
                 </div>
-
-                {/* Navigation Links */}
-                <ul className="hidden md:flex space-x-6">
+                <ul className="flex space-x-6">
                     <li>
                         <Link to="/invites" className="hover:underline focus:outline-none focus:ring">
                             Invites
                         </Link>
                     </li>
                 </ul>
-                {!isAuth &&    <Link to="/login" className="hover:underline focus:outline-none focus:ring">
+                {!isAuth && <Link to="/login" className="hover:underline focus:outline-none focus:ring">
                         Login
                     </Link>}
             </nav>

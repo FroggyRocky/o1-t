@@ -70,6 +70,7 @@ export const getSentInvites = createServerFn('GET', async (body: {
         .limit(body.pageSize)
         .offset(body.page * body.pageSize)
         .execute();
+    console.log('server invites', res)
     return res as InviteListItem[] | []
 })
 

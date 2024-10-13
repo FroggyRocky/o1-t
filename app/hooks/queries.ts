@@ -1,6 +1,4 @@
 import {useQuery, useInfiniteQuery} from '@tanstack/react-query';
-import {InvitesPermissions, Invite} from '@appTypes/invites';
-import {User} from '@appTypes/users';
 import {getUsers} from '@api/users'
 import {me} from '@api/auth'
 import {getSentInvites, getReceivedInvites} from '@api/invites'
@@ -14,6 +12,7 @@ export function useSentInvites(pageSize: number) {
                     console.log('User not found')
                     throw new Error('User not found')
                 }
+                console.log('user', user, pageSize, pageParam)
                 return getSentInvites({userId: user.id, pageSize: pageSize, page: pageParam});
         },
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
@@ -35,6 +34,7 @@ export function useReceivedInvites(pageSize: number) {
             }
             return await getReceivedInvites({userId:user.id, pageSize: pageSize, page: pageParam});
         },
+
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
             const hasMore = lastPage.length >= pageSize;
             const nextPage = lastPageParam + 1;

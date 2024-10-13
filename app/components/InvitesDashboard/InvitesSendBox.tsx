@@ -10,9 +10,12 @@ import {Loader} from "@ui/Loader/Loader";
 import {useDebounce} from "@hooks/hooks";
 import {useSentInvite} from '@hooks/mutations';
 import {InvitesPermissions} from "@appTypes/invites";
+import {useQueryClient} from "@tanstack/react-query";
 
 const PAGE_SIZE = 10;
-type Props = {};
+type Props = {
+    refetchInvites: () => void;
+};
 const inviteSchema = z.object({
     permissions: z.object({
         posts: z.object({
@@ -38,7 +41,7 @@ const inviteSchema = z.object({
 export function InvitesSendBox(props: Props) {
     const {mutate, isPending, isSuccess, error: submitErrors} = useSentInvite()
     const me = useMe().data;
-    const {register, handleSubmit, watch, setValue, reset, formState: {errors},} = useForm({
+    const {register, handleSubmit, watch, setValue, reset, formState: {errors}} = useForm({
         resolver: zodResolver(inviteSchema),
         defaultValues: {
             permissions: {
@@ -53,7 +56,7 @@ export function InvitesSendBox(props: Props) {
     const [selectedInvitee, setSelectedInvitee] = useState<any>(null);
     const users = data?.pages.flatMap(page => page) || [];
     const InvitesSendBoxRef = React.useRef(null);
-
+    const query = useQueryClient()
     useEffect(() => {
         const subscription = watch((value, {name, type}) => {
             const permissions = value.permissions;
@@ -73,13 +76,14 @@ export function InvitesSendBox(props: Props) {
     });
 
 
-    const onSubmit = (data: { permissions: InvitesPermissions }) => {
+    const onSubmit = async (data: { permissions: InvitesPermissions }) => {
         const inviteData = {
             ...data,
             invitorId: Number(me?.id) as number,
             inviteeId: Number(selectedInvitee.id) as number,
         };
-        mutate(inviteData)
+        await mutate(inviteData)
+        props.refetchInvites()
     };
 
     function handleSetSearchTerm(e: React.ChangeEvent<HTMLInputElement>) {

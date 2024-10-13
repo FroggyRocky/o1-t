@@ -4,7 +4,7 @@ import { InvitesPermissions, Invite} from '@appTypes/invites';
 import { User } from '@appTypes/users';
 import {login} from '@api/auth'
 import { sendInvite, acceptInvite, rejectInvite, changePermissions} from '@api/invites'
-import {useMe} from "@hooks/queries";
+import {useMe, useReceivedInvites, useSentInvites} from "@hooks/queries";
 
 
 export function useLogin() {
@@ -35,13 +35,13 @@ export function usePermissionEdit() {
 
 export function useSentInvite() {
     return useMutation({
-        mutationFn:(body:{permissions:InvitesPermissions, inviteeId:number, invitorId:number}) => {
+        mutationFn:async (body:{permissions:InvitesPermissions, inviteeId:number, invitorId:number}) => {
             const payload = {
                 permissions: body.permissions,
                 invitor: body.invitorId,
                 invitee: body.inviteeId
             }
-            return sendInvite(payload)
+            return await sendInvite(payload)
         },
         onSuccess: async () => {
             await useQueryClient().invalidateQueries({queryKey:['sentInvites', 'receivedInvites']})
@@ -64,16 +64,8 @@ export function useAcceptInvite() {
 
 export function useRejectInvite() {
     return useMutation({
-        mutationFn:(body:{inviteId:number}) => {
-            return rejectInvite(body)
-        },
-        onSuccess: async () => {
-            try {
-                await useQueryClient().invalidateQueries({queryKey: ['sentInvites', 'receivedInvites']})
-                await useQueryClient().refetchQueries({queryKey: ['sentInvites', 'receivedInvites']})
-            } catch (e) {
-                console.log(e)
-            }
+        mutationFn:async (body:{inviteId:number}) => {
+            return await rejectInvite(body)
         }
     })
 }

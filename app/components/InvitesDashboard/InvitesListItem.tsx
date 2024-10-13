@@ -3,9 +3,7 @@ import {InvitesPermissions} from "@appTypes/invites";
 import {RejectButton} from "@ui/RejectButton/RejectButton";
 import {AcceptButton} from "@ui/AcceptButton/AcceptButton";
 import {useAcceptInvite, useRejectInvite} from "@hooks/mutations";
-import {useSentInvites, useReceivedInvites} from "@hooks/queries";
-import {useQueryClient} from "@tanstack/react-query";
-import {useRouter} from "@tanstack/react-router";
+
 
 type Props = {
     id: number;
@@ -15,24 +13,25 @@ type Props = {
     created_at: string;
     permissions: InvitesPermissions;
     lastItemRef?: (node: any) => void
+    refetchLists: () => void
 }
 
 export function InvitesListItem(props: Props) {
     const [isCollapsed, setIsCollapsed] = useState(true);
-    const {mutate:accept} = useAcceptInvite();
-    const {mutate:reject} = useRejectInvite();
-    const router = useRouter()
-    const client = useQueryClient()
+    const {mutate: accept} = useAcceptInvite();
+    const {mutate: reject} = useRejectInvite();
+
+
     async function acceptInvite(e: React.MouseEvent) {
         e.stopPropagation()
         accept({inviteId: props.id})
-        await client.refetchQueries({queryKey:['sentInvites', 'receivedInvites']})
+        props.refetchLists()
     }
 
-     async function rejectInvite(e: React.MouseEvent) {
+    async function rejectInvite(e: React.MouseEvent) {
         e.stopPropagation()
         reject({inviteId: props.id})
-         await client.refetchQueries({queryKey:['sentInvites', 'receivedInvites']})
+        props.refetchLists()
     }
 
     // Grid is more flexible than table and better for responsive design
