@@ -1,8 +1,7 @@
 import {db} from '@db/db'
 import { createServerFn } from '@tanstack/start'
-import {User} from "../types/users";
-export const getUsers = createServerFn('GET', async (body:{pageSize:number, page:number, searchTerm:string}):Promise<User[]> => {
-    console.log(body)
+import {FrontUser, User} from "../types/users";
+export const getUsers = createServerFn('GET', async (body:{pageSize:number, page:number, searchTerm:string}):Promise<FrontUser[]> => {
     if(body.searchTerm) {
         console.log(body.searchTerm)
         return await db.selectFrom('users')

@@ -12,9 +12,6 @@ export function useLogin() {
         mutationFn:(body:{email:string, password:string}) => {
             return login(body)
         },
-        onSuccess: async (data:{token:string, user:User}, variables, context) => {
-            localStorage.setItem('token', data.token)
-        }
     })
 }
 
@@ -25,10 +22,6 @@ export function usePermissionEdit() {
             permissions:InvitesPermissions
         }) => {
             return changePermissions({userId:body.userId, permissions:body.permissions})
-        },
-        onSuccess: async () => {
-            await useQueryClient().invalidateQueries({queryKey:['sentInvites', 'receivedInvites']})
-            await useQueryClient().refetchQueries({queryKey:['sentInvites', 'receivedInvites']})
         }
     })
 }
@@ -43,10 +36,6 @@ export function useSentInvite() {
             }
             return await sendInvite(payload)
         },
-        onSuccess: async () => {
-            await useQueryClient().invalidateQueries({queryKey:['sentInvites', 'receivedInvites']})
-            await useQueryClient().refetchQueries({queryKey:['sentInvites', 'receivedInvites']})
-        }
     })
 }
 
@@ -54,10 +43,6 @@ export function useAcceptInvite() {
     return useMutation({
         mutationFn:(body:{inviteId:number}) => {
             return acceptInvite(body)
-        },
-        onSuccess: async () => {
-            await useQueryClient().invalidateQueries({queryKey:['sentInvites', 'receivedInvites']})
-            await useQueryClient().refetchQueries({queryKey:['sentInvites', 'receivedInvites']})
         }
     })
 }
@@ -66,7 +51,7 @@ export function useRejectInvite() {
     return useMutation({
         mutationFn:async (body:{inviteId:number}) => {
             return await rejectInvite(body)
-        }
+        },
     })
 }
 

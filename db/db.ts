@@ -1,8 +1,8 @@
 'use server';
-import { Kysely, PostgresDialect } from 'kysely';
+import {Generated, Kysely, PostgresDialect} from 'kysely';
 import pg from 'pg';
-import {InvitesPermissions} from "../app/types/invites";
-import {User} from "../app/types/users";
+import {InvitesPermissions} from "@appTypes/invites";
+import {User} from "@appTypes/users";
 import dotenv from 'dotenv';
 
 dotenv.config({
@@ -12,12 +12,12 @@ dotenv.config({
 interface Database {
     users: User;
     invites: {
-        id?: number;
+        id: Generated<number>;
         invitee: number;
         invitor: number;
         permissions: InvitesPermissions //jsonb object
         status: 'pending' | 'accepted' | 'rejected';
-        created_at?: Date;
+        created_at: Generated<Date>;
     }
 }
 

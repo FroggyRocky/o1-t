@@ -38,27 +38,34 @@ export function InvitesListItem(props: Props) {
     return (
         <div className="border-b" ref={props.lastItemRef}>
             <div
-                className="p-4 cursor-pointer hover:bg-gray-100 transition-all"
+                className="p-4 cursor-pointer hover:bg-gray-100 transition-all grid grid-cols-1 md:grid-cols-5 items-center gap-4"
                 onClick={() => setIsCollapsed(!isCollapsed)}
             >
-                <aside className="grid grid-cols-1 md:grid-cols-5 items-center gap-4">
-                    <p className="font-semibold text-xs text-gray-500">ID</p>
-                    <p className="font-semibold text-xs text-gray-500">Email</p>
-                    <p className="font-semibold text-xs text-gray-500">Created At</p>
-                    <p className="font-semibold text-xs text-gray-500">Status</p>
-                    <p className="font-semibold text-xs text-gray-500">Actions</p>
-                </aside>
-
-                <aside className="grid grid-cols-1 md:grid-cols-5 items-center gap-4 mt-1 break-words text-wrap">
+                <div className="font-semibold text-xs text-gray-500 h-full">
+                    <p className={'mb-4'}>ID</p>
                     <p className="font-medium">{props.id}</p>
-                    <p>Invitor {props.invitor_email} / Invitee {props.invitee_email}</p>
+                </div>
+                <div className="font-semibold text-xs text-gray-500 h-full">
+                    <p className={'mb-4'}>Email</p>
+                    <p className="font-medium">
+                        {props.invitee_email} / {props.invitor_email}
+                    </p>
+                </div>
+                <div className="font-semibold text-xs text-gray-500 h-full">
+                    <p className={'mb-4'}>Created At</p>
                     <p>{props.created_at}</p>
+                </div>
+                <div className="font-semibold text-xs text-gray-500 h-full">
+                    <p className={'mb-4'}>Status</p>
                     <p>{props.status}</p>
+                </div>
+                <div className="font-semibold text-xs text-gray-500 h-full">
+                    <p className={'mb-4'}>Actions</p>
                     <aside className="flex md:justify-start justify-between space-x-2">
                         {props.status !== 'accepted' && <AcceptButton onClick={acceptInvite}/>}
                         <RejectButton onClick={rejectInvite}/>
                     </aside>
-                </aside>
+                </div>
             </div>
 
             {/* Expanded View (Dropdown) */}

@@ -56,7 +56,6 @@ export function InvitesSendBox(props: Props) {
     const [selectedInvitee, setSelectedInvitee] = useState<any>(null);
     const users = data?.pages.flatMap(page => page) || [];
     const InvitesSendBoxRef = React.useRef(null);
-    const query = useQueryClient()
     useEffect(() => {
         const subscription = watch((value, {name, type}) => {
             const permissions = value.permissions;
@@ -82,7 +81,7 @@ export function InvitesSendBox(props: Props) {
             invitorId: Number(me?.id) as number,
             inviteeId: Number(selectedInvitee.id) as number,
         };
-        await mutate(inviteData)
+        mutate(inviteData)
         props.refetchInvites()
     };
 

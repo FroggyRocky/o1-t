@@ -1,11 +1,11 @@
 import {db} from '@db/db'
 import { createServerFn } from '@tanstack/start'
 import bcrypt from 'bcrypt'
-import {User} from "../types/users";
-import jwt from 'jsonwebtoken'
+import {FrontUser, User} from "../types/users";
+import jwt, {JwtPayload} from 'jsonwebtoken'
 import dotenv from "dotenv";
 export const login = createServerFn('POST', async (body:{email:string, password:string}) => {
-    const user = await db.selectFrom('users').selectAll().where('email', '=', body.email).executeTakeFirstOrThrow() as User & {password:string};
+    const user = await db.selectFrom('users').selectAll().where('email', '=', body.email).executeTakeFirstOrThrow()
     if (user.password && await bcrypt.compare(body.password, user.password)) {
         const token =  jwt.sign({email: user.email, id: user.id}, process.env.JWT_SECRET as string)
         return { user:{
@@ -20,17 +20,16 @@ export const login = createServerFn('POST', async (body:{email:string, password:
     }
 })
 
-export const me = createServerFn('GET', async (body:{token:string}):Promise<{user:User}> => {
+export const me = createServerFn('GET', async (body:{token:string}):Promise<{user:FrontUser}> => {
     const isValid = jwt.verify(body.token, process.env.JWT_SECRET as string)
-    const {id} = isValid as {email:string, id:number}
-    console.log(isValid, body.token)
+    const {id} = isValid as JwtPayload
     if(!isValid) {
         throw new Error('Invalid token')
     }
     const user = await db.selectFrom('users')
         .select(['id', 'email', 'name', 'created_at', 'verified'])
         .where('id', '=', id)
-        .executeTakeFirstOrThrow() as User;
+        .executeTakeFirstOrThrow();
     if(!user) {
         throw new Error('User not found')
     }

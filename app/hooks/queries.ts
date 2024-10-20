@@ -25,6 +25,7 @@ export function useSentInvites(pageSize: number) {
 }
 
 export function useReceivedInvites(pageSize: number) {
+
     return useInfiniteQuery({
         queryKey: ['receivedInvites'],
         queryFn: async ({pageParam = 0}) => {

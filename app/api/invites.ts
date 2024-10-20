@@ -10,7 +10,6 @@ export const changePermissions = createServerFn('POST', async (body: {
         .set({permissions: body.permissions})
         .where('id', '=', body.userId)
         .execute()
-
 })
 
 export const sendInvite = createServerFn('POST', async (body: {
@@ -18,8 +17,6 @@ export const sendInvite = createServerFn('POST', async (body: {
     invitor: number,
     permissions: InvitesPermissions
 }) => {
-    console.log('creating invite', body)
-
     function isInviteExist() {
         return db.selectFrom('invites')
             .where('invitee', '=', body.invitee)
@@ -70,8 +67,7 @@ export const getSentInvites = createServerFn('GET', async (body: {
         .limit(body.pageSize)
         .offset(body.page * body.pageSize)
         .execute();
-    console.log('server invites', res)
-    return res as InviteListItem[] | []
+    return res
 })
 
 export const getReceivedInvites = createServerFn('GET', async (body: {
@@ -88,7 +84,7 @@ export const getReceivedInvites = createServerFn('GET', async (body: {
         .limit(body.pageSize)
         .offset(body.page * body.pageSize)
         .execute()
-    return res as InviteListItem[] | []
+    return res
 
 })
 

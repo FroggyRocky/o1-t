@@ -7,6 +7,7 @@ export type Invite = {
     status: 'pending' | 'accepted' | 'rejected';
     created_at: Date;
 }
+
 export type InvitesPermissions = {
     profile:{
         read:boolean,
@@ -23,7 +24,7 @@ export type InvitesPermissions = {
 }
 
 export type InviteListItem = {
-    created_at: string;
+    created_at: Date;
     id: number;
     invitee: number;
     invitee_email: string;
@@ -31,5 +32,6 @@ export type InviteListItem = {
     invitor_email: string;
     permissions: InvitesPermissions;
     status: 'pending' | 'accepted' | 'rejected';
-
 }
+
+
