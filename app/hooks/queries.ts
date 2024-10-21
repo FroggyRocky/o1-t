@@ -6,21 +6,20 @@ import {getSentInvites, getReceivedInvites} from '@api/invites'
 export function useSentInvites(pageSize: number) {
     return useInfiniteQuery({
         queryKey: ['sentInvites'],
-        queryFn: async ({pageParam = 0}) => {
+        queryFn: async ({pageParam = undefined}) => {
                 const user = await _me()
                 if (!user || !user.id) {
-                    console.log('User not found')
                     throw new Error('User not found')
                 }
-                console.log('user', user, pageSize, pageParam)
-                return getSentInvites({userId: user.id, pageSize: pageSize, page: pageParam});
+                const res = await getSentInvites({userId: user.id, pageSize: pageSize, lastPagePointer: pageParam});
+                return res
         },
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
-            const hasMore = lastPage.length >= pageSize;
-            const nextPage = lastPageParam + 1;
+            const hasMore = lastPage.invites.length >= pageSize;
+            const nextPage = lastPage.lastPagePointer
             return hasMore ? nextPage : undefined;
         },
-        initialPageParam: 0,
+        initialPageParam: undefined,
     });
 }
 
@@ -28,35 +27,35 @@ export function useReceivedInvites(pageSize: number) {
 
     return useInfiniteQuery({
         queryKey: ['receivedInvites'],
-        queryFn: async ({pageParam = 0}) => {
+        queryFn: async ({pageParam = undefined}) => {
             const user = await _me()
             if(!user || !user.id) {
                 throw new Error('User not found')
             }
-            return await getReceivedInvites({userId:user.id, pageSize: pageSize, page: pageParam});
+            return await getReceivedInvites({userId:user.id, pageSize: pageSize, lastPagePointer: pageParam});
         },
 
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
-            const hasMore = lastPage.length >= pageSize;
-            const nextPage = lastPageParam + 1;
+            const hasMore = lastPage.invites.length >= pageSize;
+            const nextPage = lastPage.lastPagePointer
             return hasMore ? nextPage : undefined;
         },
-        initialPageParam: 0,
+        initialPageParam: undefined,
     });
 }
 
 export function useUsers(pageSize: number, searchInput: string) {
     return useInfiniteQuery({
         queryKey: ['users', searchInput],
-        queryFn: async ({pageParam = 0}) => {
-            return await getUsers({pageSize: pageSize, page: pageParam, searchTerm: searchInput});
+        queryFn: async ({pageParam = undefined}) => {
+            return await getUsers({pageSize: pageSize, searchTerm: searchInput, lastPagePointer: pageParam});
         },
         getNextPageParam: (lastPage, allPages, lastPageParam) => {
-            const hasMore = lastPage.length >= pageSize;
-            const nextPage = lastPageParam + 1;
+            const hasMore = lastPage.users.length >= pageSize;
+            const nextPage = lastPage.lastPagePointer;
             return hasMore ? nextPage : undefined;
         },
-        initialPageParam: 0,
+        initialPageParam: undefined,
     });
 }
 

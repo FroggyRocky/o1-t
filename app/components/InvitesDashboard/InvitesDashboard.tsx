@@ -5,7 +5,7 @@ import {useUsers} from "@hooks/queries";
 import {useReceivedInvites, useSentInvites} from '@hooks/queries';
 import {PillButton} from "@ui/PillButton/PillButton";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 1;
 type Props = {};
 
 export function InvitesDashboard(props: Props) {
@@ -17,7 +17,8 @@ export function InvitesDashboard(props: Props) {
         refetch,
         hasNextPage
     } = invitesFilter === 'received' ? useReceivedInvites(PAGE_SIZE) : useSentInvites(PAGE_SIZE);
-    const invites = data?.pages.flatMap(page => page) || [];
+
+    const invites = data?.pages.flatMap(page => page.invites) || [];
     return <div className={'w-full'}>
         <aside className={'mb-10'}>
             <InvitesSendBox refetchInvites={refetch}/>

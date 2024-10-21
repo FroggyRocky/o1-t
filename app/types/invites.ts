@@ -5,7 +5,7 @@ export type Invite = {
     invitor: number;
     permissions: InvitesPermissions,
     status: 'pending' | 'accepted' | 'rejected';
-    created_at: Date;
+    created_at:string;
 }
 
 export type InvitesPermissions = {
@@ -24,7 +24,7 @@ export type InvitesPermissions = {
 }
 
 export type InviteListItem = {
-    created_at: Date;
+    created_at: string;
     id: number;
     invitee: number;
     invitee_email: string;

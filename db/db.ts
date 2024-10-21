@@ -17,7 +17,7 @@ interface Database {
         invitor: number;
         permissions: InvitesPermissions //jsonb object
         status: 'pending' | 'accepted' | 'rejected';
-        created_at: Generated<Date>;
+        created_at: Generated<string>;
     }
 }
 

@@ -7,7 +7,7 @@ import React, {useMemo} from "react";
 
 
 type Props = {
-    invites: InviteListItem[];
+    invites: InviteListItem[] | [] | undefined
     fetchNextPage: () => void;
     refetch: () => void;
     isFetching: boolean;
@@ -18,6 +18,7 @@ export function InvitesList({invites, hasNextPage, fetchNextPage, isFetching, re
 
     const lastItemRef = useObserverRef(fetchNextPage)
     const inviteComponents = useMemo(() => {
+        if(!invites || invites.length === 0) return null
         return invites.map((invite, index) => {
             if (invites.length === index + 1 && hasNextPage) {
                 return <InvitesListItem
@@ -48,7 +49,8 @@ export function InvitesList({invites, hasNextPage, fetchNextPage, isFetching, re
     // Grid is more flexible than table and better for responsive design
     return (
         <div className="h-full overflow-y-auto shadow-lg rounded-lg border border-gray-200">
-            {invites.length > 0 ? inviteComponents : !isFetching && <p className="p-4 text-center">No invites Found</p>}
+            {!invites && <p className="p-4 text-center">No invites Found</p>}
+            {invites && invites.length > 0 ? inviteComponents : !isFetching && <p className="p-4 text-center">No invites Found</p>}
             {isFetching && <Loader/>}
         </div>
     );

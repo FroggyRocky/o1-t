@@ -13,7 +13,8 @@
       "@appTypes/*": ["./app/types/*"],
       "@db/*": ["./db/*"],
       "@components/*": ["./app/components/*"],
-      "@modules/*": ["./app/modules/*"]
+      "@modules/*": ["./app/modules/*"],
+      "@helpers/*": ["./app/helpers/*"],
     }
   }
 }

@@ -3,7 +3,7 @@ import { createServerFn } from '@tanstack/start'
 import bcrypt from 'bcrypt'
 import {FrontUser, User} from "../types/users";
 import jwt, {JwtPayload} from 'jsonwebtoken'
-import dotenv from "dotenv";
+
 export const login = createServerFn('POST', async (body:{email:string, password:string}) => {
     const user = await db.selectFrom('users').selectAll().where('email', '=', body.email).executeTakeFirstOrThrow()
     if (user.password && await bcrypt.compare(body.password, user.password)) {

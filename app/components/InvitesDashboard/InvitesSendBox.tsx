@@ -54,7 +54,7 @@ export function InvitesSendBox(props: Props) {
     const [searchTerm, setSearchTerm] = useState('');
     const {data, isFetching} = useUsers(PAGE_SIZE, searchTerm);
     const [selectedInvitee, setSelectedInvitee] = useState<any>(null);
-    const users = data?.pages.flatMap(page => page) || [];
+    const users = data?.pages.flatMap(page => page.users) || [];
     const InvitesSendBoxRef = React.useRef(null);
     useEffect(() => {
         const subscription = watch((value, {name, type}) => {

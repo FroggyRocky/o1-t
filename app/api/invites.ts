@@ -1,7 +1,7 @@
 import {db} from '@db/db'
 import {createServerFn} from '@tanstack/start'
 import {Invite, InvitesPermissions, InviteListItem} from "../types/invites";
-
+import {utf8ToBase64, base64ToUtf8} from '@helpers/dataTransformation'
 export const changePermissions = createServerFn('POST', async (body: {
     permissions: InvitesPermissions,
     userId: number
@@ -55,36 +55,52 @@ export const rejectInvite = createServerFn('POST', async (body: { inviteId: numb
 export const getSentInvites = createServerFn('GET', async (body: {
     userId: number,
     pageSize: number,
-    page: number
-}): Promise<InviteListItem[]> => {
-    const res = await db
+    lastPagePointer:string | undefined
+}): Promise<{invites:InviteListItem[], lastPagePointer:string | undefined}> => {
+    let lastPagePointer = body.lastPagePointer
+    let query = db
         .selectFrom('invites')
         .innerJoin('users as invitor', 'invites.invitor', 'invitor.id')
         .innerJoin('users as invitee', 'invites.invitee', 'invitee.id')
         .select(['invites.id', 'invites.invitee', 'invites.invitor', 'invites.permissions', 'invites.status', 'invites.created_at',
             'invitor.email as invitor_email', 'invitee.email as invitee_email'])
-        .where('invitor.id', '=', body.userId)  // Ensure you’re referencing the invitor's id
-        .limit(body.pageSize)
-        .offset(body.page * body.pageSize)
-        .execute();
-    return res
+        .where('invitor.id', '=', body.userId)
+        if(lastPagePointer) {
+            lastPagePointer = base64ToUtf8(lastPagePointer)
+            query = query.where('invites.id', '>', Number(lastPagePointer))
+        }
+        query = query.limit(body.pageSize).orderBy('invites.id', 'asc')
+    let res = await query.execute()
+    let newPagePointer = res.length > 0 ? res[res.length - 1].id : undefined
+    return {
+            invites:res,
+            lastPagePointer: newPagePointer ? utf8ToBase64(newPagePointer.toString()) : undefined
+    }
 })
 
 export const getReceivedInvites = createServerFn('GET', async (body: {
     userId: number, pageSize: number,
-    page: number
-}): Promise<InviteListItem[]> => {
-    const res = await db
+    lastPagePointer:string | undefined
+}): Promise<{invites:InviteListItem[], lastPagePointer:string | undefined}> => {
+    let lastPagePointer = body.lastPagePointer
+    let query = db
         .selectFrom('invites')
         .innerJoin('users as invitor', 'invites.invitor', 'invitor.id')
         .innerJoin('users as invitee', 'invites.invitee', 'invitee.id')
         .select(['invites.id', 'invites.invitee', 'invites.invitor', 'invites.permissions', 'invites.status', 'invites.created_at',
             'invitor.email as invitor_email', 'invitee.email as invitee_email'])
         .where('invitee', '=', body.userId)
-        .limit(body.pageSize)
-        .offset(body.page * body.pageSize)
-        .execute()
-    return res
+        if(lastPagePointer) {
+            lastPagePointer = base64ToUtf8(lastPagePointer)
+            query = query.where('invites.id', '>', Number(lastPagePointer))
+        }
+        query = query = query.limit(body.pageSize).orderBy('invites.id', 'asc')
+    let res = await query.execute()
+    let newPagePointer = res.length > 0 ? res[res.length - 1].id : undefined
+    return {
+            invites:res,
+            lastPagePointer: newPagePointer ? utf8ToBase64(newPagePointer.toString()) : undefined
+    }
 
 })
 
